@@ -14,25 +14,13 @@ def start(update, context):
 def handle_input(update, context):
     url = update.message.text
 
-    # Puoi fare ciò che vuoi con il valore immesso, ad esempio assegnarlo a una variabile
-    yt = YouTube(url)
-    
-    # Scegli il formato MP4 in streaming
-    vid = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
-    
-    # Imposta il percorso di download
-    download_path = 'percorso/del/tuo/download'  # Sostituisci con il percorso desiderato
-
-    # Scarica il video
-    video_path = vid.download(output_path=download_path)
-
-    update.message.reply_text("Video in anteprima:")
-
-    # Invia il video scaricato come messaggio video
-    context.bot.send_video(chat_id=update.effective_chat.id, video=open(video_path, 'rb'))
-
-    # Elimina il file locale
-    os.remove(video_path)
+    try:
+        yt = YouTube(url)
+        video_url = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().url
+        update.message.reply_text("Ecco il video:")
+        update.message.reply_text(video_url)
+    except Exception as e:
+        update.message.reply_text(f"Si è verificato un errore: {str(e)}")
 
 if __name__ == "__main__":
     updater = Updater(TOKEN, use_context=True)

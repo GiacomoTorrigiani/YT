@@ -23,19 +23,13 @@ def handle_input(update, context):
     # Imposta il percorso di download
     download_path = 'percorso/del/tuo/download'  # Sostituisci con il percorso desiderato
 
-    # Scarica il video in blocchi
-    video_path = os.path.join(download_path, f"{yt.title}.mp4")
-    with open(video_path, 'wb') as file:
-        for chunk in vid.stream_to_buffer():
-            file.write(chunk)
+    # Scarica il video
+    video_path = vid.download(output_path=download_path)
 
     update.message.reply_text("Video in anteprima:")
 
     # Invia il video scaricato come messaggio video
     context.bot.send_video(chat_id=update.effective_chat.id, video=open(video_path, 'rb'))
-
-    # Elimina il file locale
-    os.remove(video_path)
 
 if __name__ == "__main__":
     updater = Updater(TOKEN, use_context=True)
